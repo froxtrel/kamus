@@ -6,87 +6,15 @@ $db = Database::getInstance();
 $mysqli = $db->getConnection(); 
 // $sql_query = "SELECT * FROM words";
 // $result = $mysqli->query($sql_query);
+require 'header.php';
 
-
-;?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>Kamus Dusun Project</title>
-
-  <!-- CSS  -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-
-  <div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.8&appId=481185458719244";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-</head>
-<body>
-  <nav class="light-blue lighten-1" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo"><img width="60px" src="images/kdp1.png"></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="#">Login</a></li>
-      </ul>
-
-      <ul id="nav-mobile" class="side-nav">
-        <li><a href="#">Login</a></li>
-      </ul>
-      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
-    </div>
-  </nav>
+?>
 
   <div class="container">
 
   <br>
 
-  <nav id="malay" style="display: none;">
-    <div class="nav-wrapper">
-
-<!-- MALAY SEARCH -->
-      <form action="./malay.php" method="POST">
-        <div class="input-field">
-          <input id="search" type="search" required placeholder="Search for a terms..">
-          <label for="search"><i class="material-icons">search</i></label>
-          <i class="material-icons">close</i>
-        </div>
-      </form>
-    </div>
-  </nav>
-
-<!-- DUSUN SEARCH -->
- <nav id="dusun">
-    <div class="nav-wrapper">
-    
-      <form action="./dusun.php" method="POST">
-        <div class="input-field">
-          <input id="search" type="search" required placeholder="Search for a terms..">
-          <label for="search"><i class="material-icons">search</i></label>
-          <i class="material-icons">close</i>
-        </div>
-      </form>
-    </div>
-  </nav>
-
-  <form>
-    <p>
-    <input name="group1" type="radio" id="DM" checked="true" value="DM" />
-    <label for="DM">Dusun » Malay</label>
-
-    <input name="group1" type="radio" id="MD" value="MD" />
-    <label for="MD">Malay » Dusun</label>
-
-  </form>
+  <?php include'search.php';?>
 
   <br>
   <div class="row">
@@ -96,11 +24,11 @@ $mysqli = $db->getConnection();
           <div class="row">
 
             <div class="col s6">
-                <a class="waves-effect waves-light btn modal-trigger" href="#modal1">ADD TERMS</a>
+                <a class="waves-effect waves-light btn modal-trigger" href="./addterm.php">ADD TERMS</a>
             </div>
 
             <div class="col s6">
-                <a class="waves-effect waves-light btn modal-trigger" href="#modal1">GIVE IDEA</a>
+                <a class="waves-effect waves-light btn modal-trigger" href="#idea">GIVE IDEA</a>
             </div>
 
           </div>
@@ -258,7 +186,7 @@ $mysqli = $db->getConnection();
                       <div class="preview grey lighten-4 black-text">
                       <p><a class="black-text" href="./malay.php?id='.$row['id'].'">'.$row['malay'].'</a></p>
                       <br>
-                      <small>ADDED BY : '.$row['added_by'].'</small>
+                      <!--<small>ADDED BY : '.$row['added_by'].'</small>-->
                       <br>
                       <small>ADDED : '.humanTiming($time).' ago</small>'
                       ;
@@ -287,7 +215,7 @@ $mysqli = $db->getConnection();
 
           <div class="card z-depth-2 borderz">
             <div class="card-content black-text">
-              <span class="card-title black-text">More dictionary terms on Kamus.net:</span>
+              <span class="card-title black-text">More dictionary terms on Kamus Dusun Project:</span>
               <div class="row">
                 <div class="col s6">
                   <table class="responsive-table">
@@ -384,84 +312,4 @@ $mysqli = $db->getConnection();
 
   </div>
 
-  <footer class="page-footer light-blue lighten-1">
-    <div class="container">
-      <div class="row">
-        <div class="col l6 s12">
-          <h5 class="white-text"><img src="images/kdp.png"></h5>
-          <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
-
-
-        </div>
-        <div class="col l3 s12">
-          <!-- <h5 class="white-text">Settings</h5> -->
-          <!-- <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
-          </ul> -->
-        </div>
-        <div class="col l3 s12">
-         <!--  <h5 class="white-text">Connect</h5> -->
-         <!--  <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
-          </ul> -->
-        </div>
-      </div>
-    </div>
-    <div class="footer-copyright">
-      <div class="container">
-      Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">KDP 2016</a>
-      </div>
-    </div>
-  </footer>
- 
-
-  <!--  Scripts-->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="js/materialize.js"></script>
-  <script src="js/init.js"></script>
-
-  </body>
-</html>
-
-<!-- Modal Structure -->
-  <div id="modal1" class="modal bottom-sheet">
-    <div class="modal-content">
-      <h4>Modal Header</h4>
-      <p>A bunch of text</p>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
-    </div>
-  </div>
-          
-  <script type="text/javascript">
-    
-    $(document).ready(function(){
-    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-    $('.modal-trigger').leanModal();
-    });
-
-    // Materialize.toast(message, displayLength, className, completeCallback);
-    Materialize.toast('Click enter to submit search', 4000) // 4000 is the duration of the toast
-    
-     $('input[type=radio][name=group1]').change(function() {
-
-        if (this.value == 'DM') {
-            
-            $('#malay').toggle();
-            $('#dusun').toggle();
-        }
-        else if (this.value == 'MD') {
-
-            $('#malay').toggle();
-            $('#dusun').toggle();
-        }
-    });
-
-  </script>
+  <?php require 'footer.php';?>

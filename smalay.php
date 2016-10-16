@@ -3,34 +3,35 @@
 		require'controller.php';
 		require 'header.php';
 
-		$id = @$_GET['id'];
-		// echo $id;
+		if(isset($_POST['smalay'])){
+
+			$name = $_POST['smalay'];
+		}
 
 		$db = Database::getInstance();
 		$mysqli = $db->getConnection(); 
 
-		$sql_query = "SELECT * FROM words WHERE id = $id";
+
+		$sql_query = "SELECT * FROM words WHERE malay = $name";
 
 		$result = $mysqli->query($sql_query);
-
-		if($result->num_rows > 0 ){ 
 
 		while($row = $result->fetch_assoc()) {
 
                 $dusun = $row['dusun'];
                 $malay = $row['malay'];
-         }
+          }
 
-     	 }else{
-
-     	 	header("Location:./");
-
-     	 }
                 
 ?>
 
 <div class="container"> 
-<br><br>
+<br>
+
+<?php include'search.php';?>
+
+<br>
+
 	<div class="row">
 		<div class="col s12 m4">
 			<br>
@@ -54,15 +55,15 @@
 
          <?php
 
-         	$card =  strtolower($dusun[0]).'%';
+         	$card =  strtolower($malay[0]).'%';
 
-         	$related = "SELECT * FROM words WHERE dusun LIKE '$card' LIMIT 8 ";
+         	$related = "SELECT * FROM words WHERE malay LIKE '$card' LIMIT 8 ";
 
 			$r_result = $mysqli->query($related);
 
 			while($r_row = $r_result->fetch_assoc()) {
 
-	                echo "<small><a class='red-text' href='./dusun.php?id=".$r_row["id"]."'>".$r_row["dusun"]."</a></small><br>";
+	                echo "<small><a class='red-text' href='./malay.php?id=".$r_row["id"]."'>".$r_row["malay"]."</a></small><br>";
 	         }
 
          ?>
@@ -73,26 +74,13 @@
 			
 	          <div class="card">
 	            <div class="card-content black-text">
-	              <span class="black-text card-title"><b><?php echo strtoupper($dusun);?></b></span>
-	              <p class="preview"><?php echo strtoupper($malay);?></p>
+	              <span class="black-text card-title"><b><?php echo strtoupper($malay);?></b></span>
+	              <p class="preview"><?php echo strtoupper($dusun);?></p>
 	            </div>
 	          </div>
 
 	          <br>
-
-	           <div class="card">
-	            <div class="card-content black-text">
-	              <span class="red-text card-title"><b>We need you!</b></span>
-	              <p>Is <b>'<?php echo strtolower($dusun);?>'</b>' wrong or has spelling mistakes?</p>
-	            </div>
-	            <div class="card-action">
-	              <a href="#" class="waves-effect waves-light btn">FIX IT</a>
-	              <a href="#" class="waves-effect waves-light btn">DELETE IT</a>
-	            </div>
-	          </div>
-
-	          <br>
-	          Discuss this bahasa dusun <b>'<?php echo strtolower($dusun);?>'</b>' translation with the community:
+	          Discuss this bahasa melayu <b>'<?php echo strtolower($malay);?>'</b>' translation with the community:
 
 	          <br>
 
@@ -123,6 +111,17 @@
 
 
 	          <br>
+
+	            <div class="card">
+	            <div class="card-content black-text">
+	              <span class="red-text card-title"><b>We need you!</b></span>
+	              <p>Is <b>'<?php echo strtolower($malay);?>'</b>' wrong or has spelling mistakes?</p>
+	            </div>
+	            <div class="card-action">
+	              <a href="#" class="waves-effect waves-light btn">FIX IT</a>
+	              <a href="#" class="waves-effect waves-light btn">DELETE IT</a>
+	            </div>
+	          </div>
 	       
 
 		</div>
@@ -131,5 +130,3 @@
 
 <br><br>
 <?php require'footer.php';?>
-
-		
