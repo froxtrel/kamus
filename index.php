@@ -1,9 +1,21 @@
+<?php 
+
+require'controller.php';
+
+$db = Database::getInstance();
+$mysqli = $db->getConnection(); 
+// $sql_query = "SELECT * FROM words";
+// $result = $mysqli->query($sql_query);
+
+
+;?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>Kamus KD.net</title>
+  <title>Kamus Dusun Project</title>
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -38,11 +50,27 @@
 
   <br>
 
-  <nav>
+  <nav id="malay" style="display: none;">
     <div class="nav-wrapper">
-      <form>
+
+<!-- MALAY SEARCH -->
+      <form action="./malay.php" method="POST">
         <div class="input-field">
-          <input id="search" type="search" required placeholder="Search for a word..">
+          <input id="search" type="search" required placeholder="Search for a terms..">
+          <label for="search"><i class="material-icons">search</i></label>
+          <i class="material-icons">close</i>
+        </div>
+      </form>
+    </div>
+  </nav>
+
+<!-- DUSUN SEARCH -->
+ <nav id="dusun">
+    <div class="nav-wrapper">
+    
+      <form action="./dusun.php" method="POST">
+        <div class="input-field">
+          <input id="search" type="search" required placeholder="Search for a terms..">
           <label for="search"><i class="material-icons">search</i></label>
           <i class="material-icons">close</i>
         </div>
@@ -52,14 +80,14 @@
 
   <form>
     <p>
-    <input name="group1" type="radio" id="test1" />
-    <label for="test1">Dusun » Malay</label>
+    <input name="group1" type="radio" id="DM" checked="true" value="DM" />
+    <label for="DM">Dusun » Malay</label>
 
-    <input name="group1" type="radio" id="test2" />
-    <label for="test2">Malay » Dusun</label>
+    <input name="group1" type="radio" id="MD" value="MD" />
+    <label for="MD">Malay » Dusun</label>
 
   </form>
-  
+
   <br>
   <div class="row">
 
@@ -68,7 +96,7 @@
           <div class="row">
 
             <div class="col s6">
-                <a class="waves-effect waves-light btn modal-trigger" href="#modal1">ADD WORD</a>
+                <a class="waves-effect waves-light btn modal-trigger" href="#modal1">ADD TERMS</a>
             </div>
 
             <div class="col s6">
@@ -77,7 +105,7 @@
 
           </div>
          
-         <div class="fb-page" data-href="https://www.facebook.com/kdProject2016/" data-tabs="timeline" data-height="250" data-small-header="false" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"><blockquote cite="https://www.facebook.com/kdProject2016/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/kdProject2016/">Dusun Dictionary Project</a></blockquote></div>
+         <div class="fb-page" data-href="https://www.facebook.com/kdProject2016/" data-tabs="timeline" data-height="260" data-small-header="false" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"><blockquote cite="https://www.facebook.com/kdProject2016/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/kdProject2016/">Dusun Dictionary Project</a></blockquote></div>
 
           
         </div>
@@ -85,12 +113,14 @@
         <div class="col s12 m8">
           <div class="preview card grey lighten-4">
             <div class="card-content white-text">
-              <span class="red-text card-title"><b>Welcome to Kamus.net</b></span>
-              <p class="black-text">Kamus.net is the world's largest and most popular English-Indonesian dictionary on the web. Dedicated entirely to the Bahasa Indonesia language Kamus.net provided instant translations to thousands of words, featuring dictionary definitions in English and Indonesia from several respected resources.</p>
+              <span class="red-text card-title"><b>Welcome to Kamus Dusun Project</b></span>
+              <p class="black-text">Dedicated entirely to the Bahasa Dusun language ,Kamus Dusun Project provided instant translations to thousands of words, featuring dictionary definitions in Malay from user submitted terms.</p>
             </div>
             <div class="card-action">
               <p>We need you!
-              Help us make Kamus.net the largest human-edited English-Indonesian dictionary on the web!</p>
+              Help us make Kamus Dusun Project the largest human-edited Dusun-Malay dictionary on the web!</p>
+              <br>
+              <span class="red-text"><b>Disclaimer. We can not guarantee that the information on this page is 100% correct.</b></span> 
             </div>
           </div>
         </div>
@@ -102,59 +132,85 @@
 
            <div class="card darken-1 borderz">
             <div class="black-text card-content white-text">
-              <span class="black-text card-title">FRESH | <small> latest terms </small> </span>
+              <span class="black-text card-title"><b class="red-text">FRESH</b> | <small class="red-text"> latest terms </small> </span>
              <table>
-               <tr>
-                 <td class="black-text center">surfing</td>
-                 <td class="red-text center">berselancar</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">nausea</td>
-                 <td class="red-text center">mual</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">glasier</td>
-                 <td class="red-text center">glasier</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">time</td>
-                 <td class="red-text center">kali</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">fool</td>
-                 <td class="red-text center">bodoh</td>
-               </tr>
+             
+             <?php 
+
+                $sql_query = "SELECT * FROM words WHERE status = '0' ORDER BY date_added DESC limit 5  ";
+                $result = $mysqli->query($sql_query);
+
+                if ($result->num_rows > 0) {
+
+                while($row = $result->fetch_assoc()) {
+
+                echo "<tr><td class='center'><a class='black-text 'href='./dusun.php?id=".$row["id"]."'>".$row["dusun"]."</a></td>
+                          <td class='center'><a class='light-green-text' href='./malay.php?id=".$row["id"]."'>".$row["malay"]."</a></td></tr>";
+
+                }
+
+                echo "</table>";
+
+                } else {
+
+                echo "0 results";
+
+                }
+                             
+
+              ?>
+
              </table>
+      
             </div>
           </div>
 
-          <div class="card darken-1 borderz">
+          <!-- <div class="card darken-1 borderz">
             <div class="black-text card-content white-text">
-              <span class="black-text card-title">THANKS | <small> most active user </small> </span>
+              <span class="black-text card-title"><b class="red-text">THANKS</b> | <small class="red-text"> most active user </small> </span>
              <table>
-               <tr>
-                 <td class="black-text center">USERNAME</td>
-                 <td class="green-text center">TOTAL WORD</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">nausea</td>
-                 <td class="green-text center">234</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">glasier</td>
-                 <td class="green-text center">444</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">time</td>
-                 <td class="green-text center">121</td>
-               </tr>
-                <tr>
-                 <td class="black-text center">fool</td>
-                 <td class="green-text center">567</td>
-               </tr>
+               
+              <?php 
+
+                $sql_query = "SELECT * FROM words GROUP BY added_by ORDER BY RAND() DESC limit 5";
+                $result = $mysqli->query($sql_query);
+
+                if ($result->num_rows > 0) {
+
+                while($row = $result->fetch_assoc()) {
+
+                $add []= $row["added_by"];
+
+                echo "<tr><td class='black-text center'>".$row["added_by"]."</td></tr>";
+
+                }
+
+
+                $total = "SELECT COUNT(*) as test FROM words WHERE added_by = '".$add[0]."'";
+                $result_0 = $mysqli->query($total);
+
+                while($rows_0 = $result_0->fetch_assoc()) {
+
+                 echo "<tr><td class='black-text center'>".$rows_0['test']."</td></tr>";
+
+                }
+
+
+                echo "</table>";
+
+                } else {
+
+                echo "0 results";
+
+                }
+                
+              
+
+              ?>
+
              </table>
             </div>
-          </div>
+          </div> -->
 
         </div>
 
@@ -162,15 +218,68 @@
         <div class="col s12 m8">
            <div class="card z-depth-2 borderz">
             <div class="card-content white-text">
-              <span class="black-text card-title"><h3>Semangat</h3></span>
-              <div class="preview grey lighten-4 black-text">
-              <p>fervour
-              excitement, excitation, inflammation, fervor, fervour (noun)  the state of being emotionally aroused and worked up</p>
+
+            <?php 
+
+                      $sql_query = "SELECT * FROM words  WHERE status = '0'  ORDER BY RAND() DESC limit 1";
+                      $result = $mysqli->query($sql_query);
+
+                      if ($result->num_rows > 0) {
+
+                      while($row = $result->fetch_assoc()) {
+
+                      $time = strtotime($row['date_added']);
+
+                      function humanTiming ($time) {
+
+                          $time = time() - $time; // to get the time since that moment
+                          $time = ($time<1)? 1 : $time;
+                          $tokens = array (
+                              31536000 => 'year',
+                              2592000 => 'month',
+                              604800 => 'week',
+                              86400 => 'day',
+                              3600 => 'hour',
+                              60 => 'minute',
+                              1 => 'second'
+                          );
+
+                          foreach ($tokens as $unit => $text) {
+                              if ($time < $unit) continue;
+                              $numberOfUnits = floor($time / $unit);
+                              return $numberOfUnits.' '.$text.(($numberOfUnits>1)?'s':'');
+                          }
+
+                      }
+
+                      echo
+                      '
+                      <span class="black-text card-title"><h3><a href="./dusun.php?id='.$row['id'].'">'.$row['dusun'].'</a></h3></span>
+                      <div class="preview grey lighten-4 black-text">
+                      <p><a class="black-text" href="./malay.php?id='.$row['id'].'">'.$row['malay'].'</a></p>
+                      <br>
+                      <small>ADDED BY : '.$row['added_by'].'</small>
+                      <br>
+                      <small>ADDED : '.humanTiming($time).' ago</small>'
+                      ;
+
+                      }
+
+                      echo "</table>";
+
+                      } else {
+
+                      echo "0 results";
+
+                      }
+                                   
+
+              ?>
+
               </div>
             </div>
             <div class="card-action">
-               <a href="#"><small>Listen »</small></a>
-               <a href="#"><small>More »</small></a>
+               <br>
             </div>
           </div>
 
@@ -182,51 +291,63 @@
               <div class="row">
                 <div class="col s6">
                   <table class="responsive-table">
-                     <tr>
-                       <td class="black-text ">surfing</td>
-                       <td class="red-text ">berselancar</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">nausea</td>
-                       <td class="red-text ">mual</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">glasier</td>
-                       <td class="red-text ">glasier</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">time</td>
-                       <td class="red-text ">kali</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">fool</td>
-                       <td class="red-text ">bodoh</td>
-                     </tr>
+                     <?php 
+
+                      $sql_query = "SELECT * FROM words WHERE status = '0' ORDER BY RAND() DESC limit 5";
+                      $result = $mysqli->query($sql_query);
+
+                      if ($result->num_rows > 0) {
+
+                      while($row = $result->fetch_assoc()) {
+
+                      echo "<tr>
+                              <td class='black-text center'><left><a class='black-text' href='./dusun.php?id=".$row["id"]."'>".$row["dusun"]."</a></left></td>
+                              <td class='light-green-text center'><a href='./malay.php?id=".$row["id"]."'>".$row["malay"]."</a></td>
+                            </tr>";
+
+                      }
+
+                      echo "</table>";
+
+                      } else {
+
+                      echo "0 results";
+
+                      }
+                                   
+
+                    ?>
                    </table>
                 </div>
 
                 <div class="col s6">
                   <table class="responsive-table">
-                     <tr>
-                       <td class="black-text ">surfing</td>
-                       <td class="red-text ">berselancar</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">nausea</td>
-                       <td class="red-text ">mual</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">glasier</td>
-                       <td class="red-text ">glasier</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">time</td>
-                       <td class="red-text ">kali</td>
-                     </tr>
-                      <tr>
-                       <td class="black-text ">fool</td>
-                       <td class="red-text ">bodoh</td>
-                     </tr>
+                    <?php 
+
+                      $sql_query = "SELECT * FROM words WHERE status = '0' ORDER BY RAND() DESC limit 5";
+                      $result = $mysqli->query($sql_query);
+
+                      if ($result->num_rows > 0) {
+
+                      while($row = $result->fetch_assoc()) {
+
+                      echo "<tr>
+                              <td class='light-green-text center'><a class='black-text' href='./malay.php?id=".$row["id"]."'>".$row["malay"]."</a></td>
+                              <td class='black-text center'><a href='./dusun.php?id=".$row["id"]."'>".$row["dusun"]."</a></td>                             
+                            </tr>";
+
+                      }
+
+                      echo "</table>";
+
+                      } else {
+
+                      echo "0 results";
+
+                      }
+                                   
+
+                    ?>
                    </table>
                 </div>
 
@@ -240,7 +361,7 @@
           <div class="card z-depth-2 borderz">
             <div class="card-content grey-text">
               <span class="card-title">Did you know?</span>
-              <p>The only words with three consecutive double letters are bookkeeping and bookkeeper</p>
+              <p>The majority of the Kadazandusuns are Christians, mainly Roman Catholic and some Protestants.Islam is also practised by a growing minority.</p>
             </div>
           </div>
 
@@ -324,7 +445,23 @@
     $(document).ready(function(){
     // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
     $('.modal-trigger').leanModal();
-  });
-         
+    });
+
+    // Materialize.toast(message, displayLength, className, completeCallback);
+    Materialize.toast('Click enter to submit search', 4000) // 4000 is the duration of the toast
+    
+     $('input[type=radio][name=group1]').change(function() {
+
+        if (this.value == 'DM') {
+            
+            $('#malay').toggle();
+            $('#dusun').toggle();
+        }
+        else if (this.value == 'MD') {
+
+            $('#malay').toggle();
+            $('#dusun').toggle();
+        }
+    });
 
   </script>
