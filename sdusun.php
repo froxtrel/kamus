@@ -1,16 +1,27 @@
 <?php
 		
 include('controller.php');
+$db = new Database();
+$db->connect();
 
-		$db = new Database();
-	    $db->connect();
-	    require 'header.php';
 
-		$id = @$_GET['id'];
-		// echo $id;
-		$db->escapeString($id); 
+		if(isset($_POST['sdusun'])){
 
-		$db->select('words','*',null,'id='.$id.'',null,null); // Table name, Column Names, WHERE conditions, ORDER BY conditions
+			$name = $_POST['sdusun'];
+
+			$db->select('words','id',null,'dusun ="'.$name.'"',null,1); // Table name, Column Names, WHERE conditions, ORDER BY conditions
+
+            $result = $db->getResult();     
+            $row    = $db->numRows($result);      
+            $id     = $result[0]['id'];
+
+            if($row > 0 ) {
+
+			$db = new Database();
+		    $db->connect();
+		    require 'header.php';
+
+			$db->select('words','*',null,'id='.$id.'',null,null); // Table name, Column Names, WHERE conditions, ORDER BY conditions
 
             $result = $db->getResult();     
             $row = $db->numRows($result);        
@@ -21,11 +32,21 @@ include('controller.php');
                       
             $dusun = $row['dusun'];
             $malay = $row['malay'];
+
             }                
 
             } else {
 
-            header("Location:./");
+            $db->_404($name);
+
+            }
+
+            }else{
+
+           
+            $db->_404($name);
+
+            }
 
             }
                 
@@ -63,9 +84,9 @@ include('controller.php');
 
          <?php
 
-         	$card =  strtolower($malay[0]).'%';
+         	$card =  strtolower($dusun[0]).'%';
 
-         	$db->select('words','*',null,"malay LIKE '".$card."'",null,10); // Table name, Column Names, WHERE conditions, ORDER BY conditions
+         	$db->select('words','*',null,"dusun LIKE '".$card."'",null,10); // Table name, Column Names, WHERE conditions, ORDER BY conditions
 
             $latest = $db->getResult();     
             $l_row = $db->numRows($latest);        
@@ -74,7 +95,7 @@ include('controller.php');
 
             foreach ($latest as $key => $related) {
                       
-            echo "<small><a class='red-text' href='./malay.php?id=".$related["id"]."'>".$related["malay"]."</a></small><br>";
+            echo "<small><a class='red-text' href='./dusun.php?id=".$related["id"]."'>".$related["dusun"]."</a></small><br>";
 
             }                
 
@@ -92,8 +113,8 @@ include('controller.php');
 			
 	          <div class="card">
 	            <div class="card-content black-text">
-	              <span class="blue-text card-title"><b class="chewy"><?php echo strtoupper($malay);?></b></span>
-	              <p class="preview chewy"><?php echo strtoupper($dusun);?></p>
+	              <span class="blue-text card-title"><b class="chewy"><?php echo strtoupper($dusun);?></b></span>
+	              <p class="preview chewy"><?php echo strtoupper($malay);?></p>
 	            </div>
 	            <div class="card-action">
 	              
@@ -107,7 +128,7 @@ include('controller.php');
 	           <div class="card">
 	            <div class="card-content black-text">
 	              <span class="red-text card-title"><b>We need you!</b></span>
-	              <p>Is <b>'<?php echo strtolower($malay);?>'</b>' wrong or has spelling mistakes?</p>
+	              <p>Is <b>'<?php echo strtolower($dusun);?>'</b>' wrong or has spelling mistakes?</p>
 	            </div>
 	            <div class="card-action">
 	              <a href="#" class="waves-effect waves-light btn">FIX IT</a>
@@ -116,7 +137,7 @@ include('controller.php');
 	          </div>
 
 	          <br>
-	          Discuss this bahasa melayu <b>'<?php echo strtolower($malay);?>'</b>' translation with the community:
+	          Discuss this bahasa dusun <b>'<?php echo strtolower($dusun);?>'</b>' translation with the community:
 
 	          <br>
 

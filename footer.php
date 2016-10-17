@@ -1,4 +1,4 @@
-<footer class="page-footer light-blue lighten-1">
+<footer class="page-footer teal accent-3">
     <div class="container">
       <div class="row">
         <div class="col l6 s12">
@@ -29,7 +29,7 @@
     </div>
     <div class="footer-copyright">
       <div class="container">
-      Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">KDP 2016</a>
+      Made by <a class="orange-text text-lighten-3 chewy" href="http://materializecss.com">KDP 2016</a>
       </div>
     </div>
   </footer>
@@ -44,9 +44,6 @@
 </html>
          
   <script type="text/javascript">
-    
-    // Materialize.toast(message, displayLength, className, completeCallback);
-    Materialize.toast('Click enter to submit search', 4000) // 4000 is the duration of the toast
     
      $('input[type=radio][name=group1]').change(function() {
 

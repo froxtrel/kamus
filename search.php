@@ -16,7 +16,7 @@
  <nav id="dusun">
     <div class="nav-wrapper">
     
-      <form action="./dusun.php" method="POST">
+      <form action="./sdusun.php" method="POST">
         <div class="input-field">
           <input name="sdusun" id="search" type="search" required placeholder="Search for a terms..">
           <label for="search"><i class="material-icons">search</i></label>
@@ -29,9 +29,9 @@
   <form>
     <p>
     <input name="group1" type="radio" id="DM" checked="true" value="DM" />
-    <label for="DM">Dusun » Malay</label>
+    <label for="DM" class="chewy">Dusun » Malay</label>
 
     <input name="group1" type="radio" id="MD" value="MD" />
-    <label for="MD">Malay » Dusun</label>
+    <label for="MD" class="chewy">Malay » Dusun</label>
 
   </form>

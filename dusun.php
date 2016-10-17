@@ -1,33 +1,39 @@
 <?php
 		
-		require'controller.php';
-		require 'header.php';
+		include('controller.php');
+
+		$db = new Database();
+	    $db->connect();
+	    require 'header.php';
 
 		$id = @$_GET['id'];
 		// echo $id;
+		$db->escapeString($id); 
 
-		$db = Database::getInstance();
-		$mysqli = $db->getConnection(); 
+		$db->select('words','*',null,'id='.$id.'',null,null); // Table name, Column Names, WHERE conditions, ORDER BY conditions
 
-		$sql_query = "SELECT * FROM words WHERE id = $id";
+            $result = $db->getResult();     
+            $row = $db->numRows($result);        
+                    
+            if ($row > 0) {
 
-		$result = $mysqli->query($sql_query);
+            foreach ($result as $key => $row) {
+                      
+            $dusun = $row['dusun'];
+            $malay = $row['malay'];
+            }                
 
-		if($result->num_rows > 0 ){ 
+            } else {
 
-		while($row = $result->fetch_assoc()) {
+            header("Location:./");
 
-                $dusun = $row['dusun'];
-                $malay = $row['malay'];
-         }
+            }
 
-     	 }else{
 
-     	 	header("Location:./");
-
-     	 }
                 
 ?>
+
+<?php require 'geturl.php' ?>
 
 <div class="container"> 
 <br><br>
@@ -52,29 +58,46 @@
 
          Nearby & related entries:<br><br>
 
-         <?php
+          <?php
 
-         	$card =  strtolower($dusun[0]).'%';
+         	$card =  strtolower($malay[0]).'%';
 
-         	$related = "SELECT * FROM words WHERE dusun LIKE '$card' LIMIT 8 ";
+         	$db->select('words','*',null,"dusun LIKE '".$card."'",null,10); // Table name, Column Names, WHERE conditions, ORDER BY conditions
 
-			$r_result = $mysqli->query($related);
+            $latest = $db->getResult();     
+            $l_row = $db->numRows($latest);        
+                    
+            if ($l_row > 0) {
 
-			while($r_row = $r_result->fetch_assoc()) {
+            foreach ($latest as $key => $related) {
+                      
+            echo "<small><a class='red-text' href='./dusun.php?id=".$related["id"]."'>".$related["dusun"]."</a></small><br>";
 
-	                echo "<small><a class='red-text' href='./dusun.php?id=".$r_row["id"]."'>".$r_row["dusun"]."</a></small><br>";
-	         }
+            }                
+
+            } else {
+
+            echo 'No match';
+
+            } 	
 
          ?>
 
 		</div>
-		<div class="col s12 m8">
+		<div class="col s12 m6">
 
 			
 	          <div class="card">
 	            <div class="card-content black-text">
-	              <span class="black-text card-title"><b><?php echo strtoupper($dusun);?></b></span>
-	              <p class="preview"><?php echo strtoupper($malay);?></p>
+	              <span class="blue-text card-title"><b class="chewy"><?php echo strtoupper($dusun);?></b></span>
+	              <p class="preview chewy"><?php echo strtoupper($malay);?></p>
+	            </div>
+	            <div class="card-action">
+	              
+	            	<div class="fb-like" data-href="<?php  echo $absolute_url;?>" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+
+	            	<br>
+
 	            </div>
 	          </div>
 
@@ -96,29 +119,6 @@
 
 	          <br>
 
-
-	          <?php  
-
-				function url_origin( $s, $use_forwarded_host = false ) {
-				    $ssl      = ( ! empty( $s['HTTPS'] ) && $s['HTTPS'] == 'on' );
-				    $sp       = strtolower( $s['SERVER_PROTOCOL'] );
-				    $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
-				    $port     = $s['SERVER_PORT'];
-				    $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
-				    $host     = ( $use_forwarded_host && isset( $s['HTTP_X_FORWARDED_HOST'] ) ) ? $s['HTTP_X_FORWARDED_HOST'] : ( isset( $s['HTTP_HOST'] ) ? $s['HTTP_HOST'] : null );
-				    $host     = isset( $host ) ? $host : $s['SERVER_NAME'] . $port;
-				    return $protocol . '://' . $host;
-				}
-
-				function full_url( $s, $use_forwarded_host = false ) {
-				    return url_origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
-				}
-
-				$absolute_url = full_url( $_SERVER );
-
-
-				?>
-
 			  <div class="fb-comments" data-href="<?php  echo $absolute_url;?>" data-numposts="5"></div>
 
 
@@ -126,6 +126,11 @@
 	       
 
 		</div>
+
+		<div class="col s12 m2">
+		<!-- extra slot -->
+		</div>
+
 	</div>
 </div>
 

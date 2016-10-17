@@ -1,29 +1,58 @@
 <?php
 		
-		require'controller.php';
-		require 'header.php';
+include('controller.php');
+$db = new Database();
+$db->connect();
+
 
 		if(isset($_POST['smalay'])){
 
 			$name = $_POST['smalay'];
-		}
 
-		$db = Database::getInstance();
-		$mysqli = $db->getConnection(); 
+			$db->select('words','id',null,'malay ="'.$name.'"',null,1); // Table name, Column Names, WHERE conditions, ORDER BY conditions
+
+            $result = $db->getResult();     
+            $row    = $db->numRows($result);      
+            $id     = $result[0]['id'];
+
+            if($row > 0 ) {
+
+			$db = new Database();
+		    $db->connect();
+		    require 'header.php';
+
+			$db->select('words','*',null,'id='.$id.'',null,null); // Table name, Column Names, WHERE conditions, ORDER BY conditions
+
+            $result = $db->getResult();     
+            $row = $db->numRows($result);        
+                    
+            if ($row > 0) {
+
+            foreach ($result as $key => $row) {
+                      
+            $dusun = $row['dusun'];
+            $malay = $row['malay'];
+
+            }                
+
+            } else {
+
+            header("Location:./404.php?id=".$name."");
+
+            }
+
+            }else{
+
+            header("Location:./404.php?id=".$name."");
 
 
-		$sql_query = "SELECT * FROM words WHERE malay = $name";
+            }
 
-		$result = $mysqli->query($sql_query);
-
-		while($row = $result->fetch_assoc()) {
-
-                $dusun = $row['dusun'];
-                $malay = $row['malay'];
-          }
-
+            }
                 
 ?>
+
+<?php require 'geturl.php' ?>
 
 <div class="container"> 
 <br>
@@ -57,62 +86,46 @@
 
          	$card =  strtolower($malay[0]).'%';
 
-         	$related = "SELECT * FROM words WHERE malay LIKE '$card' LIMIT 8 ";
+         	$db->select('words','*',null,"malay LIKE '".$card."'",null,10); // Table name, Column Names, WHERE conditions, ORDER BY conditions
 
-			$r_result = $mysqli->query($related);
+            $latest = $db->getResult();     
+            $l_row = $db->numRows($latest);        
+                    
+            if ($l_row > 0) {
 
-			while($r_row = $r_result->fetch_assoc()) {
+            foreach ($latest as $key => $related) {
+                      
+            echo "<small><a class='red-text' href='./malay.php?id=".$related["id"]."'>".$related["malay"]."</a></small><br>";
 
-	                echo "<small><a class='red-text' href='./malay.php?id=".$r_row["id"]."'>".$r_row["malay"]."</a></small><br>";
-	         }
+            }                
+
+            } else {
+
+            echo 'No match';
+
+            }    	
 
          ?>
 
 		</div>
-		<div class="col s12 m8">
+		<div class="col s12 m6">
 
 			
 	          <div class="card">
 	            <div class="card-content black-text">
-	              <span class="black-text card-title"><b><?php echo strtoupper($malay);?></b></span>
-	              <p class="preview"><?php echo strtoupper($dusun);?></p>
+	              <span class="blue-text card-title"><b class="chewy"><?php echo strtoupper($malay);?></b></span>
+	              <p class="preview chewy"><?php echo strtoupper($dusun);?></p>
+	            </div>
+	            <div class="card-action">
+	              
+	            	<div class="fb-like" data-href="<?php  echo $absolute_url;?>" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+
 	            </div>
 	          </div>
 
 	          <br>
-	          Discuss this bahasa melayu <b>'<?php echo strtolower($malay);?>'</b>' translation with the community:
 
-	          <br>
-
-
-	          <?php  
-
-				function url_origin( $s, $use_forwarded_host = false ) {
-				    $ssl      = ( ! empty( $s['HTTPS'] ) && $s['HTTPS'] == 'on' );
-				    $sp       = strtolower( $s['SERVER_PROTOCOL'] );
-				    $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
-				    $port     = $s['SERVER_PORT'];
-				    $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
-				    $host     = ( $use_forwarded_host && isset( $s['HTTP_X_FORWARDED_HOST'] ) ) ? $s['HTTP_X_FORWARDED_HOST'] : ( isset( $s['HTTP_HOST'] ) ? $s['HTTP_HOST'] : null );
-				    $host     = isset( $host ) ? $host : $s['SERVER_NAME'] . $port;
-				    return $protocol . '://' . $host;
-				}
-
-				function full_url( $s, $use_forwarded_host = false ) {
-				    return url_origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
-				}
-
-				$absolute_url = full_url( $_SERVER );
-
-
-				?>
-
-			  <div class="fb-comments" data-href="<?php  echo $absolute_url;?>" data-numposts="5"></div>
-
-
-	          <br>
-
-	            <div class="card">
+	           <div class="card">
 	            <div class="card-content black-text">
 	              <span class="red-text card-title"><b>We need you!</b></span>
 	              <p>Is <b>'<?php echo strtolower($malay);?>'</b>' wrong or has spelling mistakes?</p>
@@ -122,9 +135,26 @@
 	              <a href="#" class="waves-effect waves-light btn">DELETE IT</a>
 	            </div>
 	          </div>
+
+	          <br>
+	          Discuss this bahasa melayu <b>'<?php echo strtolower($malay);?>'</b>' translation with the community:
+
+	          <br>
+
+
+
+			  <div class="fb-comments" data-href="<?php  echo $absolute_url;?>" data-numposts="5"></div>
+
+
+	          <br>
 	       
 
 		</div>
+
+		<div class="col s12 m2">
+		<!-- extra slot -->
+		</div>
+
 	</div>
 </div>
 
